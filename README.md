@@ -1,3 +1,3 @@
 # LiteRule4j
 
-LiteRule4j is a lightweight rule engine for Java.
+LiteRule4j is a lightweight rule engine for IoT, written in Java.
