@@ -3,7 +3,7 @@ package cc.sofast.framework.literule4j.api;
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Props;
 import cc.sofast.framework.literule4j.actor.AppActor;
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaAwareMsg;
+import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMsg;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -32,7 +32,7 @@ public class RuleEngineService {
     }
 
     public void init(RuleChinaDefinition ruleChinaDefinition) {
-        system.tell(new RuleChinaAwareMsg(ruleChinaDefinition));
+        system.tell(new RuleChinaInitMsg(ruleChinaDefinition));
     }
 
     public void reload() {

@@ -1,6 +1,5 @@
 package cc.sofast.framework.literule4j.actor.lifecycle;
 
-import cc.sofast.framework.literule4j.api.DefaultRuleMessage;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,11 +9,11 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class RuleChinaAwareMsg extends DefaultRuleMessage {
+public class RuleChinaInitMsg extends AbstractRuleMessage {
 
     private RuleChinaDefinition definition;
 
-    public RuleChinaAwareMsg(RuleChinaDefinition definition) {
+    public RuleChinaInitMsg(RuleChinaDefinition definition) {
         this.definition = definition;
     }
 }

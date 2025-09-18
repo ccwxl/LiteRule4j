@@ -1,6 +1,6 @@
 package cc.sofast.framework.literule4j;
 
-import cc.sofast.framework.literule4j.api.DefaultRuleMessage;
+import cc.sofast.framework.literule4j.actor.lifecycle.DefaultRuleMessage;
 import cc.sofast.framework.literule4j.api.RuleEngineController;
 import cc.sofast.framework.literule4j.api.RuleMessage;
 import org.springframework.boot.CommandLineRunner;
