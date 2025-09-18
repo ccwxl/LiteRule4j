@@ -25,7 +25,7 @@ public class ClassPathRuleDefinitionScanner implements InitializingBean {
         for (Resource resource : resources) {
             String json = new String(resource.getInputStream().readAllBytes());
             RuleChinaDefinition ruleChinaDefinition = JsonUtils.fromJson(json, RuleChinaDefinition.class);
-            ruleEngineService.load(ruleChinaDefinition);
+            ruleEngineService.init(ruleChinaDefinition);
         }
     }
 }

@@ -31,7 +31,15 @@ public class RuleEngineService {
         system.tell(message);
     }
 
-    public void load(RuleChinaDefinition ruleChinaDefinition) {
+    public void init(RuleChinaDefinition ruleChinaDefinition) {
         system.tell(new RuleChinaAwareMsg(ruleChinaDefinition));
+    }
+
+    public void reload() {
+
+    }
+
+    public void destroy() {
+
     }
 }

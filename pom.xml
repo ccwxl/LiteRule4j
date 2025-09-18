@@ -19,7 +19,6 @@
         <scala.binary.version>2.13</scala.binary.version>
     </properties>
 
-
     <dependencyManagement>
         <dependencies>
             <dependency>
@@ -31,7 +30,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-
 
     <dependencies>
         <dependency>
@@ -46,15 +44,17 @@
             <groupId>com.typesafe.akka</groupId>
             <artifactId>akka-actor-typed_${scala.binary.version}</artifactId>
         </dependency>
-        <dependency>
-            <groupId>com.typesafe.akka</groupId>
-            <artifactId>akka-actor-testkit-typed_${scala.binary.version}</artifactId>
-            <scope>test</scope>
-        </dependency>
+
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
             <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>com.typesafe.akka</groupId>
+            <artifactId>akka-actor-testkit-typed_${scala.binary.version}</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -63,6 +63,7 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+
     <repositories>
         <repository>
             <id>aliyun-repos</id>
@@ -79,6 +80,7 @@
             <url>https://repo.akka.io/maven/</url>
         </repository>
     </repositories>
+
     <build>
         <plugins>
             <plugin>

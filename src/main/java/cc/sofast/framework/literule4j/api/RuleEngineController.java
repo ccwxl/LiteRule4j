@@ -17,7 +17,7 @@ public class RuleEngineController {
         this.service = service;
     }
 
-    public void exec(RuleMessage message) throws Exception {
+    public void exec(RuleMessage message) {
 
         service.post(message);
     }
