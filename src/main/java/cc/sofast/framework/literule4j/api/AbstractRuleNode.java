@@ -23,19 +23,4 @@ public abstract class AbstractRuleNode implements RuleNode {
      */
     protected String id;
 
-    /**
-     * 节点关系
-     */
-    protected Map<NodeResult, List<String>> transitions = new HashMap<>();
-
-    /**
-     * 添加节点关系
-     *
-     * @param result 结果
-     * @param targetNodeId 节点id
-     */
-    public void addTransition(NodeResult result, String targetNodeId) {
-        List<String> transition = transitions.computeIfAbsent(result, k -> new ArrayList<>());
-        transition.add(targetNodeId);
-    }
 }

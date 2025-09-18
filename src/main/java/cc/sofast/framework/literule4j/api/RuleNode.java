@@ -1,6 +1,5 @@
 package cc.sofast.framework.literule4j.api;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -21,21 +20,9 @@ public interface RuleNode {
     }
 
     /**
-     * 获取节点ID
-     * @return 节点ID
-     */
-    String getId();
-
-    /**
      * 执行节点
      * @param ctx 上下文
-     * @return 节点执行结果
+     * @param ruleMsg 消息
      */
-    NodeResult execute(RuleContext ctx) throws Exception;
-
-    /**
-     * 获取节点转换关系
-     * @return 节点转换关系
-     */
-    Map<NodeResult, List<String>> getTransitions();
+    void onMsg(RuleContext ctx, RuleMessage ruleMsg) throws Exception;
 }

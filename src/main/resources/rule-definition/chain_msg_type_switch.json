@@ -1,0 +1,75 @@
+{
+  "ruleChain": {
+    "id": "chain_msg_type_switch",
+    "name": "测试规则链-msgTypeSwitch"
+  },
+  "metadata": {
+    "nodes": [
+      {
+        "id": "s1",
+        "type": "msgTypeSwitch",
+        "name": "消息路由",
+        "firstNode": true,
+        "debugMode": true
+      },
+      {
+        "id": "s2",
+        "type": "jsTransform",
+        "name": "s2-transform",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata['addFrom']='s2';\n msgType='s2';return {'msg':msg,'metadata':metadata,'msgType':msgType};"
+        }
+      },
+      {
+        "id": "s3",
+        "type": "jsTransform",
+        "name": "s3-transform",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata['addFrom']='s3';\n msgType='s3';return {'msg':msg,'metadata':metadata,'msgType':msgType};"
+        }
+      },
+      {
+        "id": "s4",
+        "type": "jsTransform",
+        "name": "s4-transform",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata['addFrom']='s4';\n msgType='s4';return {'msg':msg,'metadata':metadata,'msgType':msgType};"
+        }
+      },
+      {
+        "id": "s5",
+        "type": "jsTransform",
+        "name": "s4-transform",
+        "debugMode": true,
+        "configuration": {
+          "jsScript": "metadata['addFrom']='Default';\n return {'msg':msg,'metadata':metadata,'msgType':msgType};"
+        }
+      }
+    ],
+    "connections": [
+      {
+        "fromId": "s1",
+        "toId": "s2",
+        "type": "TEST_MSG_TYPE1"
+      },
+      {
+        "fromId": "s1",
+        "toId": "s3",
+        "type": "TEST_MSG_TYPE1"
+      },
+      {
+        "fromId": "s1",
+        "toId": "s4",
+        "type": "TEST_MSG_TYPE2"
+      },
+      {
+        "fromId": "s1",
+        "toId": "s5",
+        "type": "Default"
+      }
+    ]
+  }
+}

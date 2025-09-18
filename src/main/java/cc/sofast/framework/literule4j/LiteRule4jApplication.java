@@ -1,7 +1,12 @@
 package cc.sofast.framework.literule4j;
 
+import cc.sofast.framework.literule4j.api.DefaultRuleMessage;
+import cc.sofast.framework.literule4j.api.RuleEngineController;
+import cc.sofast.framework.literule4j.api.RuleMessage;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
 
 /**
  * @author wxl
@@ -13,4 +18,11 @@ public class LiteRule4jApplication {
         SpringApplication.run(LiteRule4jApplication.class, args);
     }
 
+    @Bean
+    public CommandLineRunner commandLineRunner(RuleEngineController controller) {
+        return args -> {
+            RuleMessage message = new DefaultRuleMessage();
+            controller.exec("chain_call_rest_api", message);
+        };
+    }
 }

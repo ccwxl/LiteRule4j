@@ -18,30 +18,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
 @NoArgsConstructor
 @Builder(setterPrefix = "with")
 public class RuleContext {
-    /**
-     * 消息类型
-     */
-    private String msgType;
-    /**
-     * 元数据
-     */
-    private final Map<String, Object> metadata = new ConcurrentHashMap<>();
-    /**
-     * 数据
-     */
-    private final Map<String, Object> data = new ConcurrentHashMap<>();
+
     /**
      * 调试信息
      */
     private final List<String> trace = new CopyOnWriteArrayList<>();
 
-    public void put(String key, Object value) {
-        data.put(key, value);
-    }
-
-    public <T> T get(String key, Class<T> type) {
-        return type.cast(data.get(key));
-    }
 
     public void addTrace(String log) {
 //        trace.add(log);

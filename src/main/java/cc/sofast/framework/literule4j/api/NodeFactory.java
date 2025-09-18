@@ -1,6 +1,8 @@
 package cc.sofast.framework.literule4j.api;
 
 
+import cc.sofast.framework.literule4j.core.action.LogAction;
+
 import java.util.Map;
 
 /**
@@ -18,7 +20,7 @@ public class NodeFactory {
      */
     public static RuleNode creteRuleNode(String id, String type, Map<String, Object> configuration) {
         return switch (type) {
-            case "jsFilter" -> initRuleNode(new JsFilterNode(), id, configuration);
+            case "jsFilter" -> initRuleNode(new LogAction(), id, configuration);
             default -> throw new IllegalArgumentException("Unsupported node type: " + type);
         };
     }
