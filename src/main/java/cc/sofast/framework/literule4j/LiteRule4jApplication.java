@@ -22,7 +22,7 @@ public class LiteRule4jApplication {
     public CommandLineRunner commandLineRunner(RuleEngineController controller) {
         return args -> {
             RuleMessage message = new DefaultRuleMessage();
-            message.setRuleChainId("ruleChain1");
+            message.setRuleChainId("chain_call_rest_api");
             controller.exec(message);
         };
     }

@@ -23,7 +23,8 @@ public class RuleNodeActor extends AbstractBehavior<RuleMessage> {
         super(context);
     }
 
-    public static Behavior<RuleMessage> create(RuleChinaDefinition definition) {
+    public static Behavior<RuleMessage> create(RuleChinaDefinition definition,
+                                               ActorRef<RuleMessage> ruleChainActor) {
 
         return null;
     }

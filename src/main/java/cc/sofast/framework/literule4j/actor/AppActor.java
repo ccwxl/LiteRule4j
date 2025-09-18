@@ -38,8 +38,11 @@ public class AppActor extends AbstractBehavior<RuleMessage> {
 
     private Behavior<RuleMessage> onMessage(RuleMessage ruleMessage) {
         getContext().getLog().info("RuleEngineChain received: {}", ruleMessage);
-        if (ruleMessage instanceof RuleChinaInitMsg) {
-            initRuleChina((RuleChinaInitMsg) ruleMessage);
+        if (ruleMessage instanceof RuleChinaInitMsg initMsg) {
+            initRuleChina(initMsg);
+            //创建规则节点
+            ActorRef<RuleMessage> ruleMessageActorRef = ruleChinaIdToActor.get(ruleMessage.getRuleChainId());
+            ruleMessageActorRef.tell(initMsg);
         }
         if (ruleMessage instanceof DefaultRuleMessage) {
             ActorRef<RuleMessage> ruleMessageActorRef = ruleChinaIdToActor.get(ruleMessage.getRuleChainId());
@@ -50,12 +53,17 @@ public class AppActor extends AbstractBehavior<RuleMessage> {
 
     private void initRuleChina(RuleChinaInitMsg ruleMessage) {
         RuleChinaDefinition definition = ruleMessage.getDefinition();
-        ruleChinaIdToActor.put(definition.getId(), createRuleChainActor(definition));
+        String id = definition.getRuleChain().getId();
+        if (ruleChinaIdToActor.containsKey(id)) {
+            getContext().getLog().info("RuleChainActor already exists: {}", id);
+            return;
+        }
+        ruleChinaIdToActor.put(definition.getRuleChain().getId(), createRuleChainActor(definition));
     }
 
     private ActorRef<RuleMessage> createRuleChainActor(RuleChinaDefinition definition) {
-        ActorRef<RuleMessage> chinaActor = getContext().spawn(RuleChainActor.create(definition), "rule-engine-chain");
-        getContext().getLog().info("RuleEngineChain created: {}", chinaActor);
+        ActorRef<RuleMessage> chinaActor = getContext().spawn(RuleChainActor.create(definition), definition.getRuleChain().getId());
+        getContext().getLog().info("RuleChainActor created: {}", chinaActor);
         return chinaActor;
     }
 }
