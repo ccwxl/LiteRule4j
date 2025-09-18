@@ -1,5 +1,6 @@
 package cc.sofast.framework.literule4j.actor;
 
+import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
@@ -15,6 +16,8 @@ import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 public class RuleNodeActor extends AbstractBehavior<RuleMessage> {
 
     private RuleNode ruleNode;
+
+    private ActorRef<RuleMessage> ruleChainActor;
 
     public RuleNodeActor(ActorContext<RuleMessage> context) {
         super(context);

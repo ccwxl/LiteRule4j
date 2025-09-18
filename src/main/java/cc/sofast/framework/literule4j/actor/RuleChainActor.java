@@ -1,6 +1,6 @@
 package cc.sofast.framework.literule4j.actor;
 
-import akka.actor.ActorRef;
+import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
@@ -21,7 +21,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class RuleChainActor extends AbstractBehavior<RuleMessage> {
 
-    private final Map<String, List<ActorRef>> ruleNodeIdToActor = new ConcurrentHashMap<>();
+    private final Map<String, List<ActorRef<RuleMessage>>> ruleNodeIdToActor = new ConcurrentHashMap<>();
 
     public RuleChainActor(ActorContext<RuleMessage> context) {
         super(context);
@@ -44,7 +44,7 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
 
         }
         if (ruleMessage instanceof RuleNodeToNextNodeMsg) {
-            
+
         }
         return null;
     }
