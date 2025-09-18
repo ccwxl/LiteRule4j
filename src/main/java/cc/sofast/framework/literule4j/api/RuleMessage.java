@@ -11,6 +11,8 @@ public interface RuleMessage {
 
     String getRuleChainId();
 
+    void setRuleChainId(String ruleChainId);
+
     Map<String, Object> getData();
 
     Map<String, Object> getMetadata();

@@ -1,7 +1,7 @@
 package cc.sofast.framework.literule4j.actor;
 
-import akka.actor.AbstractActor;
 import akka.actor.ActorRef;
+import akka.actor.typed.Behavior;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Receive;
@@ -22,6 +22,10 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
 
     public RuleChainActor(ActorContext<RuleMessage> context) {
         super(context);
+    }
+
+    public static Behavior<RuleMessage> create() {
+        return null;
     }
 
 

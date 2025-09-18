@@ -17,8 +17,8 @@ public class RuleEngineController {
         this.service = service;
     }
 
-    public void exec(String ruleChainId, RuleMessage message) throws Exception {
-        RuleEngine ruleEngine = service.loadRuleEngine(ruleChainId);
-        ruleEngine.run(message);
+    public void exec(RuleMessage message) throws Exception {
+
+        service.post(message);
     }
 }

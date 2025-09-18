@@ -1,28 +1,37 @@
 package cc.sofast.framework.literule4j.api;
 
+import akka.actor.typed.ActorSystem;
+import akka.actor.typed.Props;
+import cc.sofast.framework.literule4j.actor.AppActor;
+import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaAwareMsg;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
+import com.typesafe.config.Config;
+import com.typesafe.config.ConfigFactory;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author wxl
  */
 @Slf4j
+@Getter
+@Setter
 public class RuleEngineService {
 
-    private Map<String, RuleEngine> ruleEngineMap = new HashMap<>();
+    private ActorSystem<RuleMessage> system;
 
-    public RuleEngine loadRuleEngine(String ruleChainId) throws Exception {
-        RuleEngine ruleEngine = ruleEngineMap.putIfAbsent(ruleChainId, RuleChainLoader.loadFromClassPath(ruleChainId));
-        log.info("load rule chain: {}", ruleChainId);
-        return ruleEngine;
+    public RuleEngineService() {
+        Config config = ConfigFactory.parseString("akka.warn-on-no-license-key = off")
+                .withFallback(ConfigFactory.load());
+        this.system = ActorSystem.create(AppActor.create(), "RuleEngineSystem", config, Props.empty().withDispatcherDefault());
     }
 
-    public void saveRuleEngine(RuleEngine ruleEngine) {
-        RuleChinaDefinition ruleChinaDefinition = ruleEngine.getRuleChinaDefinition();
-        String id = ruleChinaDefinition.getId();
-        ruleEngineMap.put(id, ruleEngine);
+    public void post(RuleMessage message) {
+        system.tell(message);
+    }
+
+    public void load(RuleChinaDefinition ruleChinaDefinition) {
+        system.tell(new RuleChinaAwareMsg(ruleChinaDefinition));
     }
 }
