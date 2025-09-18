@@ -8,6 +8,7 @@ import akka.actor.typed.javadsl.Receive;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleNodeToNextNodeMsg;
 import cc.sofast.framework.literule4j.api.RuleMessage;
 import cc.sofast.framework.literule4j.api.RuleNode;
+import cc.sofast.framework.literule4j.api.metadata.Node;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 
 /**
@@ -23,9 +24,9 @@ public class RuleNodeActor extends AbstractBehavior<RuleMessage> {
         super(context);
     }
 
-    public static Behavior<RuleMessage> create(RuleChinaDefinition definition,
+    public static Behavior<RuleMessage> create(RuleChinaDefinition definition, Node node,
                                                ActorRef<RuleMessage> ruleChainActor) {
-
+        String id = node.getId();
         return null;
     }
 

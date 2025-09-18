@@ -28,6 +28,8 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
 
     private final Map<String, List<ActorRef<RuleMessage>>> ruleNodeIdToActor = new ConcurrentHashMap<>();
 
+    private final Map<String, List<Connection>> ruleNodeIdToConnections = new ConcurrentHashMap<>();
+
     public RuleChainActor(ActorContext<RuleMessage> context) {
         super(context);
     }
@@ -65,7 +67,7 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
         List<Connection> connections = metadata.getConnections();
         ActorRef<RuleMessage> self = getContext().getSelf();
         for (Node node : nodes) {
-            ActorRef<RuleMessage> chinaActor = getContext().spawn(RuleNodeActor.create(definition, self), node.getId());
+            ActorRef<RuleMessage> chinaActor = getContext().spawn(RuleNodeActor.create(definition, node, self), node.getId());
             ruleNodeIdToActor.put(node.getId(), List.of(chinaActor));
         }
     }
