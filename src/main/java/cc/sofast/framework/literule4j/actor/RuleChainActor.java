@@ -7,7 +7,8 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import cc.sofast.framework.literule4j.actor.lifecycle.DefaultRuleMessage;
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMsg;
+import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMessage;
+import cc.sofast.framework.literule4j.actor.lifecycle.RuleNodeToRuleChinaMessage;
 import cc.sofast.framework.literule4j.api.ActorSystemContext;
 import cc.sofast.framework.literule4j.api.RuleMessage;
 import cc.sofast.framework.literule4j.api.metadata.Connection;
@@ -46,12 +47,14 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
     @Override
     public Receive<RuleMessage> createReceive() {
         return newReceiveBuilder()
-                .onMessage(RuleChinaInitMsg.class, this::initRuleNodeActors)
+                .onMessage(RuleChinaInitMessage.class, this::initRuleNodeActors)
+                .onMessage(RuleNodeToRuleChinaMessage.class, this::processNodeMessage)
                 .onMessage(DefaultRuleMessage.class, this::onMessage)
                 .build();
     }
 
-    private Behavior<RuleMessage> initRuleNodeActors(RuleChinaInitMsg initMsg) {
+
+    private Behavior<RuleMessage> initRuleNodeActors(RuleChinaInitMessage initMsg) {
         RuleChinaDefinition definition = initMsg.getDefinition();
         ActorSystemContext context = initMsg.getContext();
         Metadata metadata = definition.getMetadata();
@@ -77,6 +80,15 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
 
     private Behavior<RuleMessage> onMessage(DefaultRuleMessage ruleMessage) {
         getContext().getLog().info("[onMsg] RuleChainActor received a msg: {}", ruleMessage);
+        //todo 获取第一个节点执行
+
+        return this;
+    }
+
+
+    private Behavior<RuleMessage> processNodeMessage(RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage) {
+        //todo 获取RuleNode的下面的节点执行
+
         return this;
     }
 }

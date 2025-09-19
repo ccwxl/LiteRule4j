@@ -7,7 +7,7 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import cc.sofast.framework.literule4j.actor.lifecycle.DefaultRuleMessage;
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMsg;
+import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMessage;
 import cc.sofast.framework.literule4j.api.RuleMessage;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 
@@ -32,12 +32,12 @@ public class AppActor extends AbstractBehavior<RuleMessage> {
     @Override
     public Receive<RuleMessage> createReceive() {
         return newReceiveBuilder()
-                .onMessage(RuleChinaInitMsg.class, this::initRuleChinaHandler)
+                .onMessage(RuleChinaInitMessage.class, this::initRuleChinaHandler)
                 .onMessage(DefaultRuleMessage.class, this::onMessage)
                 .build();
     }
 
-    private Behavior<RuleMessage> initRuleChinaHandler(RuleChinaInitMsg initMsg) {
+    private Behavior<RuleMessage> initRuleChinaHandler(RuleChinaInitMessage initMsg) {
         RuleChinaDefinition definition = initMsg.getDefinition();
         String id = definition.getRuleChain().getId();
         if (ruleChinaIdToActor.containsKey(id)) {

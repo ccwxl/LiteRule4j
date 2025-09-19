@@ -19,31 +19,32 @@ public class DefaultRuleContext implements RuleContext {
 
     @Override
     public void tellSuccess(RuleMessage msg) {
+        //todo 发送成功消息
 
     }
 
     @Override
     public void tellFailure(RuleMessage msg, Throwable th) {
-
+        //todo 发送失败消息
     }
 
     @Override
     public void tellNext(RuleMessage msg, String relationType) {
-
+        //todo 发送下一条消息
     }
 
     @Override
     public void tellNext(RuleMessage msg, Set<String> relationTypes) {
-
+        //todo 批量发送消息
     }
 
     @Override
     public void tellTrue(RuleMessage msg) {
-
+        //todo 发送消息true
     }
 
     @Override
     public void tellFalse(RuleMessage msg) {
-
+        //todo 发送消息false
     }
 }

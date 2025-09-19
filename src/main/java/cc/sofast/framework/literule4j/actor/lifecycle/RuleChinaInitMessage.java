@@ -10,13 +10,13 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class RuleChinaInitMsg implements RuleDataLifeMessage {
+public class RuleChinaInitMessage implements RuleDataLifeMessage {
 
     private RuleChinaDefinition definition;
 
     private ActorSystemContext context;
 
-    public RuleChinaInitMsg(RuleChinaDefinition definition, ActorSystemContext actorSystemContext) {
+    public RuleChinaInitMessage(RuleChinaDefinition definition, ActorSystemContext actorSystemContext) {
         this.definition = definition;
         this.context = actorSystemContext;
     }
