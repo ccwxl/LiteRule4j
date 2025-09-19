@@ -20,7 +20,7 @@ public class NodeFactory {
      */
     public static RuleNode creteRuleNode(String id, String type, Map<String, Object> configuration) {
         return switch (type) {
-            case "jsFilter" -> initRuleNode(new LogAction(), id, configuration);
+            case "logAction" -> initRuleNode(new LogAction(), id, configuration);
             default -> throw new IllegalArgumentException("Unsupported node type: " + type);
         };
     }

@@ -32,8 +32,8 @@ public class RuleEngineService {
         system.tell(message);
     }
 
-    public void init(RuleChinaDefinition ruleChinaDefinition) {
-        system.tell(new RuleChinaInitMsg(ruleChinaDefinition));
+    public void init(RuleChinaDefinition ruleChinaDefinition, ActorSystemContext actorSystemContext) {
+        system.tell(new RuleChinaInitMsg(ruleChinaDefinition, actorSystemContext));
     }
 
     public void reload() {

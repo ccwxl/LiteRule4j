@@ -1,6 +1,5 @@
 package cc.sofast.framework.literule4j.actor.lifecycle;
 
-import cc.sofast.framework.literule4j.api.RuleMessage;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Getter
 @Setter
-public abstract class AbstractRuleMessage implements RuleMessage {
+public abstract class AbstractRuleMessage implements RuleDataMessage {
     private String ruleChainId;
 
     /**

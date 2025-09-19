@@ -7,14 +7,14 @@
     "nodes": [
       {
         "id": "s1",
-        "type": "msgTypeSwitch",
+        "type": "logAction",
         "name": "消息路由",
         "firstNode": true,
         "debugMode": true
       },
       {
         "id": "s2",
-        "type": "jsTransform",
+        "type": "logAction",
         "name": "s2-transform",
         "debugMode": true,
         "configuration": {
@@ -23,7 +23,7 @@
       },
       {
         "id": "s3",
-        "type": "jsTransform",
+        "type": "logAction",
         "name": "s3-transform",
         "debugMode": true,
         "configuration": {
@@ -32,7 +32,7 @@
       },
       {
         "id": "s4",
-        "type": "jsTransform",
+        "type": "logAction",
         "name": "s4-transform",
         "debugMode": true,
         "configuration": {
@@ -41,7 +41,7 @@
       },
       {
         "id": "s5",
-        "type": "jsTransform",
+        "type": "logAction",
         "name": "s4-transform",
         "debugMode": true,
         "configuration": {

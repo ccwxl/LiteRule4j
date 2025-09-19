@@ -7,7 +7,7 @@
     "nodes": [
       {
         "id": "s1",
-        "type": "jsFilter",
+        "type": "logAction",
         "name": "过滤",
         "debugMode": true,
         "firstNode": true,
@@ -17,7 +17,7 @@
       },
       {
         "id": "s2",
-        "type": "jsTransform",
+        "type": "logAction",
         "name": "转换",
         "debugMode": true,
         "configuration": {
@@ -26,7 +26,7 @@
       },
       {
         "id": "s3",
-        "type": "restApiCall",
+        "type": "logAction",
         "name": "推送数据",
         "debugMode": true,
         "configuration": {

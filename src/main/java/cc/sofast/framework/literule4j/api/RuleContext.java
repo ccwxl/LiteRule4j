@@ -1,18 +1,15 @@
 package cc.sofast.framework.literule4j.api;
 
-import lombok.Data;
-
-import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.Set;
 
 /**
  * @author wxl
  */
-@Data
-public class RuleContext {
+public interface RuleContext {
+    void tellSuccess(RuleMessage msg);
+    void tellFailure(RuleMessage msg, Throwable th);
 
-    /**
-     * 调试信息
-     */
-    private final List<String> trace = new CopyOnWriteArrayList<>();
+    void tellNext(RuleMessage msg, String relationType);
+    void tellNext(RuleMessage msg, Set<String> relationTypes);
+
 }

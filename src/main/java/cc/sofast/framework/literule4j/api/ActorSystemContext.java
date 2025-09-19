@@ -3,6 +3,5 @@ package cc.sofast.framework.literule4j.api;
 /**
  * @author wxl
  */
-public interface RuleMessage {
-
+public class ActorSystemContext {
 }

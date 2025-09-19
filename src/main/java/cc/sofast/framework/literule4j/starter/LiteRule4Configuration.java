@@ -1,5 +1,6 @@
 package cc.sofast.framework.literule4j.starter;
 
+import cc.sofast.framework.literule4j.api.ActorSystemContext;
 import cc.sofast.framework.literule4j.api.RuleEngineController;
 import cc.sofast.framework.literule4j.api.RuleEngineService;
 import org.springframework.context.annotation.Bean;
@@ -22,7 +23,12 @@ public class LiteRule4Configuration {
     }
 
     @Bean
-    public ClassPathRuleDefinitionScanner ruleDefinitionScanner(RuleEngineService ruleEngineService) {
-        return new ClassPathRuleDefinitionScanner(ruleEngineService);
+    public ActorSystemContext actorSystemContext() {
+        return new ActorSystemContext();
+    }
+
+    @Bean
+    public ClassPathRuleDefinitionScanner ruleDefinitionScanner(RuleEngineService ruleEngineService, ActorSystemContext actorSystemContext) {
+        return new ClassPathRuleDefinitionScanner(ruleEngineService, actorSystemContext);
     }
 }

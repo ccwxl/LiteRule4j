@@ -7,7 +7,7 @@
     "nodes": [
       {
         "id": "root_s1",
-        "type": "jsFilter",
+        "type": "logAction",
         "name": "过滤",
         "debugMode": true,
         "firstNode": true,
@@ -17,7 +17,7 @@
       },
       {
         "id": "root_s2",
-        "type": "jsTransform",
+        "type": "logAction",
         "name": "转换",
         "debugMode": true,
         "configuration": {
@@ -26,7 +26,7 @@
       },
       {
         "id": "root_flow_node_01",
-        "type": "jsTransform",
+        "type": "logAction",
         "name": "转换",
         "debugMode": true,
         "configuration": {
@@ -35,7 +35,7 @@
       },
       {
         "id": "root_s3",
-        "type": "log",
+        "type": "logAction",
         "name": "记录日志",
         "debugMode": true,
         "configuration": {

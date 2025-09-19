@@ -16,8 +16,6 @@ import lombok.NoArgsConstructor;
 @Builder(setterPrefix = "with")
 public class RuleChinaDefinition {
 
-    private String id;
-
     /**
      * 规则定义
      */

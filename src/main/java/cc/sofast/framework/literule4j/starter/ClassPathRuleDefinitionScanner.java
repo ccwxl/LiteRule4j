@@ -1,5 +1,6 @@
 package cc.sofast.framework.literule4j.starter;
 
+import cc.sofast.framework.literule4j.api.ActorSystemContext;
 import cc.sofast.framework.literule4j.api.RuleEngineService;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 import cc.sofast.framework.literule4j.core.utils.JsonUtils;
@@ -14,8 +15,11 @@ public class ClassPathRuleDefinitionScanner implements InitializingBean {
 
     private final RuleEngineService ruleEngineService;
 
-    public ClassPathRuleDefinitionScanner(RuleEngineService ruleEngineService) {
+    private final ActorSystemContext actorSystemContext;
+
+    public ClassPathRuleDefinitionScanner(RuleEngineService ruleEngineService, ActorSystemContext actorSystemContext) {
         this.ruleEngineService = ruleEngineService;
+        this.actorSystemContext = actorSystemContext;
     }
 
     @Override
@@ -25,7 +29,7 @@ public class ClassPathRuleDefinitionScanner implements InitializingBean {
         for (Resource resource : resources) {
             String json = new String(resource.getInputStream().readAllBytes());
             RuleChinaDefinition ruleChinaDefinition = JsonUtils.fromJson(json, RuleChinaDefinition.class);
-            ruleEngineService.init(ruleChinaDefinition);
+            ruleEngineService.init(ruleChinaDefinition, actorSystemContext);
         }
     }
 }
