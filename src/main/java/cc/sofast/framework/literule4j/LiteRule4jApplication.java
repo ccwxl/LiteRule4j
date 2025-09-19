@@ -20,8 +20,7 @@ public class LiteRule4jApplication {
     @Bean
     public CommandLineRunner commandLineRunner(RuleEngineController controller) {
         return _ -> {
-            RuleMessage message = new RuleMessage();
-            message.setRuleChainId("chain_has_sub_chain_node");
+            RuleMessage message = new RuleMessage("chain_has_sub_chain_node", "chain_has_sub_chain_node", null);
             controller.exec(message);
         };
     }

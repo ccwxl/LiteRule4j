@@ -1,5 +1,6 @@
 package cc.sofast.framework.literule4j.actor.lifecycle;
 
+import cc.sofast.framework.literule4j.api.RuleMessage;
 import cc.sofast.framework.literule4j.api.metadata.ConnectionType;
 import lombok.Getter;
 import lombok.Setter;
@@ -17,4 +18,7 @@ public class RuleNodeToRuleChinaMessage extends RuleEngineMessage {
 
     private Set<ConnectionType> relationTypes;
 
+    public RuleNodeToRuleChinaMessage(RuleMessage msg) {
+        super(msg);
+    }
 }

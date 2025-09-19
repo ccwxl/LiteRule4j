@@ -1,9 +1,6 @@
 package cc.sofast.framework.literule4j.api;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -13,25 +10,24 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Data
 @Builder
-@AllArgsConstructor
-@NoArgsConstructor
-public class RuleMessage {
+@RequiredArgsConstructor
+public final class RuleMessage {
 
     /**
      * todo 源节点ID
      */
     @Deprecated
-    private String originNodeId;
+    private final String originNodeId;
 
     /**
      * 规则链ID
      */
-    private String ruleChainId;
+    private final String ruleChainId;
 
     /**
      * 消息类型
      */
-    private String msgType;
+    private final String msgType;
     /**
      * 元数据
      */

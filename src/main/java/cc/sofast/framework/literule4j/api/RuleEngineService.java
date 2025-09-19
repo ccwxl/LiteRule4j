@@ -32,8 +32,7 @@ public class RuleEngineService {
     }
 
     public void post(RuleMessage message) {
-        RuleEngineMessage ruleEngineMessage = new RuleEngineMessage();
-        ruleEngineMessage.setMsg(message);
+        RuleEngineMessage ruleEngineMessage = new RuleEngineMessage(message);
         system.tell(ruleEngineMessage);
     }
 

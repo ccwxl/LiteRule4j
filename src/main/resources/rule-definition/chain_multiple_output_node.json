@@ -17,7 +17,7 @@
       },
       {
         "id": "root_s2",
-        "type": "logAction",
+        "type": "logAction1",
         "name": "转换",
         "debugMode": true,
         "configuration": {
@@ -26,7 +26,7 @@
       },
       {
         "id": "root_flow_node_01",
-        "type": "logAction",
+        "type": "logAction2",
         "name": "转换",
         "debugMode": true,
         "configuration": {
