@@ -49,6 +49,7 @@ public class RuleNodeActor extends AbstractBehavior<RuleMessage> {
 
     private Behavior<RuleMessage> onMessage(DefaultRuleMessage ruleMessage) {
         try {
+            getContext().getLog().info("[onMsg] RuleNodeActor received a msg: {}", ruleMessage);
             ruleNode.onMsg(ruleContext, ruleMessage);
         } catch (Exception e) {
             ruleContext.tellFailure(ruleMessage, e);

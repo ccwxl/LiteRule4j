@@ -11,6 +11,7 @@ import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMessage;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleNodeToRuleChinaMessage;
 import cc.sofast.framework.literule4j.api.ActorSystemContext;
 import cc.sofast.framework.literule4j.api.RuleMessage;
+import cc.sofast.framework.literule4j.api.RuleNodeCtx;
 import cc.sofast.framework.literule4j.api.metadata.Connection;
 import cc.sofast.framework.literule4j.api.metadata.Metadata;
 import cc.sofast.framework.literule4j.api.metadata.Node;
@@ -30,7 +31,9 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
 
     private RuleChinaDefinition definition;
 
-    private final Map<String, List<ActorRef<RuleMessage>>> ruleNodeIdToActor = new ConcurrentHashMap<>();
+    private RuleNodeCtx firstNodeCtx;
+
+    private final Map<String, ActorRef<RuleMessage>> ruleNodeIdToActor = new ConcurrentHashMap<>();
 
     private final Map<String, List<String>> ruleNodeIdToConnections = new ConcurrentHashMap<>();
 
@@ -63,7 +66,10 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
         ActorRef<RuleMessage> self = getContext().getSelf();
         for (Node node : nodes) {
             ActorRef<RuleMessage> nodeActor = getContext().spawn(RuleNodeActor.create(definition, context, node, self), node.getId());
-            ruleNodeIdToActor.put(node.getId(), List.of(nodeActor));
+            if (node.getFirstNode()) {
+                firstNodeCtx = new RuleNodeCtx(self, nodeActor, node);
+            }
+            ruleNodeIdToActor.put(node.getId(), nodeActor);
             getContext().getLog().info("[initMsg] RuleChainActor created an nodeActor: {} id:[{}]", nodeActor, node.getId());
         }
 
@@ -80,15 +86,19 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
 
     private Behavior<RuleMessage> onMessage(DefaultRuleMessage ruleMessage) {
         getContext().getLog().info("[onMsg] RuleChainActor received a msg: {}", ruleMessage);
-        //todo 获取第一个节点执行
-
+        firstNodeCtx.getSelfActor().tell(ruleMessage);
         return this;
     }
 
 
     private Behavior<RuleMessage> processNodeMessage(RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage) {
-        //todo 获取RuleNode的下面的节点执行
-
+        // 获取RuleNode的下面的节点执行
+        String originNodeId = ruleNodeToRuleChinaMessage.getOriginNodeId();
+        List<String> nextNodeIds = ruleNodeIdToConnections.get(originNodeId);
+        for (String nextNodeId : nextNodeIds) {
+            ActorRef<RuleMessage> nextNodeActor = ruleNodeIdToActor.get(nextNodeId);
+            nextNodeActor.tell(ruleNodeToRuleChinaMessage.getMsg());
+        }
         return this;
     }
 }

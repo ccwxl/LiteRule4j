@@ -14,4 +14,13 @@ public class RuleNodeCtx {
     private ActorRef<RuleMessage> ruleChainActor;
     private ActorRef<RuleMessage> selfActor;
     private Node node;
+
+    public RuleNodeCtx() {
+    }
+
+    public RuleNodeCtx(ActorRef<RuleMessage> ruleChainActor, ActorRef<RuleMessage> nodeActor, Node node) {
+        this.ruleChainActor = ruleChainActor;
+        this.selfActor = nodeActor;
+        this.node = node;
+    }
 }
