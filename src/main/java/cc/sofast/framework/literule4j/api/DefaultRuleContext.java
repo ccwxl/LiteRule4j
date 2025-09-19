@@ -19,7 +19,7 @@ public class DefaultRuleContext implements RuleContext {
 
     @Override
     public void tellSuccess(RuleMessage msg) {
-        
+
     }
 
     @Override
@@ -34,6 +34,16 @@ public class DefaultRuleContext implements RuleContext {
 
     @Override
     public void tellNext(RuleMessage msg, Set<String> relationTypes) {
+
+    }
+
+    @Override
+    public void tellTrue(RuleMessage msg) {
+
+    }
+
+    @Override
+    public void tellFalse(RuleMessage msg) {
 
     }
 }

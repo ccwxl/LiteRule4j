@@ -38,23 +38,22 @@ public class AppActor extends AbstractBehavior<RuleMessage> {
     }
 
     private Behavior<RuleMessage> initRuleChinaHandler(RuleChinaInitMsg initMsg) {
-        getContext().getLog().info("[initMsg] RuleChinaInitMsg received: {}", initMsg);
         RuleChinaDefinition definition = initMsg.getDefinition();
         String id = definition.getRuleChain().getId();
         if (ruleChinaIdToActor.containsKey(id)) {
-            getContext().getLog().info("[initMsg] RuleChainActor already exists: {}", id);
+            getContext().getLog().info("[initMsg] AppActor already exists: [{}]", id);
             return this;
         }
         ActorRef<RuleMessage> chinaActor = getContext().spawn(RuleChainActor.create(definition), definition.getRuleChain().getId());
         ruleChinaIdToActor.put(definition.getRuleChain().getId(), chinaActor);
-        getContext().getLog().info("[initMsg] RuleChainActor created: {}", chinaActor);
+        getContext().getLog().info("[initMsg] AppActor created an ruleChinaActor: {} id:[{}]", chinaActor, id);
         chinaActor.tell(initMsg);
         return this;
     }
 
 
     private Behavior<RuleMessage> onMessage(DefaultRuleMessage ruleMessage) {
-        getContext().getLog().info("[ruleMsg] RuleEngineChain received: {}", ruleMessage);
+        getContext().getLog().info("[onMsg] AppActor received a msg: {}", ruleMessage);
         ActorRef<RuleMessage> ruleMessageActorRef = ruleChinaIdToActor.get(ruleMessage.getRuleChainId());
         ruleMessageActorRef.tell(ruleMessage);
         return this;

@@ -6,8 +6,8 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
+import cc.sofast.framework.literule4j.actor.lifecycle.DefaultRuleMessage;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMsg;
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleNodeToNextNodeMsg;
 import cc.sofast.framework.literule4j.api.ActorSystemContext;
 import cc.sofast.framework.literule4j.api.RuleMessage;
 import cc.sofast.framework.literule4j.api.metadata.Connection;
@@ -46,22 +46,12 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
     @Override
     public Receive<RuleMessage> createReceive() {
         return newReceiveBuilder()
-                .onMessage(RuleMessage.class, this::onMessage)
+                .onMessage(RuleChinaInitMsg.class, this::initRuleNodeActors)
+                .onMessage(DefaultRuleMessage.class, this::onMessage)
                 .build();
     }
 
-    private Behavior<RuleMessage> onMessage(RuleMessage ruleMessage) {
-        if (ruleMessage instanceof RuleNodeToNextNodeMsg) {
-            getContext().getLog().info("RuleEngineChain received RuleNodeToNextNodeMsg: {}", ruleMessage);
-        }
-        if (ruleMessage instanceof RuleChinaInitMsg initMsg) {
-            initRuleNodeActor(initMsg);
-            getContext().getLog().info("RuleEngineChain received RuleChinaInitMsg: {}", ruleMessage);
-        }
-        return this;
-    }
-
-    private void initRuleNodeActor(RuleChinaInitMsg initMsg) {
+    private Behavior<RuleMessage> initRuleNodeActors(RuleChinaInitMsg initMsg) {
         RuleChinaDefinition definition = initMsg.getDefinition();
         ActorSystemContext context = initMsg.getContext();
         Metadata metadata = definition.getMetadata();
@@ -69,8 +59,9 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
         List<Connection> connections = metadata.getConnections();
         ActorRef<RuleMessage> self = getContext().getSelf();
         for (Node node : nodes) {
-            ActorRef<RuleMessage> chinaActor = getContext().spawn(RuleNodeActor.create(definition,context, node, self), node.getId());
-            ruleNodeIdToActor.put(node.getId(), List.of(chinaActor));
+            ActorRef<RuleMessage> nodeActor = getContext().spawn(RuleNodeActor.create(definition, context, node, self), node.getId());
+            ruleNodeIdToActor.put(node.getId(), List.of(nodeActor));
+            getContext().getLog().info("[initMsg] RuleChainActor created an nodeActor: {} id:[{}]", nodeActor, node.getId());
         }
 
         //节点联系
@@ -81,5 +72,11 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
             List<String> connectionList = ruleNodeIdToConnections.computeIfAbsent(fromId, k -> new ArrayList<>());
             connectionList.add(toId);
         }
+        return this;
+    }
+
+    private Behavior<RuleMessage> onMessage(DefaultRuleMessage ruleMessage) {
+        getContext().getLog().info("[onMsg] RuleChainActor received a msg: {}", ruleMessage);
+        return this;
     }
 }

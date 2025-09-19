@@ -7,7 +7,6 @@ import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import cc.sofast.framework.literule4j.actor.lifecycle.DefaultRuleMessage;
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleNodeToNextNodeMsg;
 import cc.sofast.framework.literule4j.api.*;
 import cc.sofast.framework.literule4j.api.metadata.Node;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
@@ -44,17 +43,15 @@ public class RuleNodeActor extends AbstractBehavior<RuleMessage> {
     @Override
     public Receive<RuleMessage> createReceive() {
         return newReceiveBuilder()
-                .onMessage(RuleMessage.class, this::onMessage)
+                .onMessage(DefaultRuleMessage.class, this::onMessage)
                 .build();
     }
 
-    private Behavior<RuleMessage> onMessage(RuleMessage ruleMessage) {
-        if (ruleMessage instanceof DefaultRuleMessage) {
-            try {
-                ruleNode.onMsg(ruleContext, ruleMessage);
-            } catch (Exception e) {
-                ruleContext.tellFailure(ruleMessage, e);
-            }
+    private Behavior<RuleMessage> onMessage(DefaultRuleMessage ruleMessage) {
+        try {
+            ruleNode.onMsg(ruleContext, ruleMessage);
+        } catch (Exception e) {
+            ruleContext.tellFailure(ruleMessage, e);
         }
         return this;
     }
