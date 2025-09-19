@@ -1,5 +1,6 @@
 package cc.sofast.framework.literule4j.api;
 
+import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
 import lombok.Getter;
 import lombok.Setter;
 

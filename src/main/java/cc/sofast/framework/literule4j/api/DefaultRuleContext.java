@@ -25,6 +25,7 @@ public class DefaultRuleContext implements RuleContext {
 
     @Override
     public void tellSuccess(RuleMessage msg) {
+        msg.setOriginNodeId(nodeCtx.getNode().getId());
         RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage();
         ruleNodeToRuleChinaMessage.setMsg(msg);
         ruleNodeToRuleChinaMessage.setOriginNodeId(nodeCtx.getNode().getId());
@@ -34,6 +35,7 @@ public class DefaultRuleContext implements RuleContext {
 
     @Override
     public void tellFailure(RuleMessage msg, Throwable th) {
+        msg.setOriginNodeId(nodeCtx.getNode().getId());
         RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage();
         ruleNodeToRuleChinaMessage.setMsg(msg);
         ruleNodeToRuleChinaMessage.setOriginNodeId(nodeCtx.getNode().getId());
@@ -43,6 +45,7 @@ public class DefaultRuleContext implements RuleContext {
 
     @Override
     public void tellNext(RuleMessage msg, String relationType) {
+        msg.setOriginNodeId(nodeCtx.getNode().getId());
         RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage();
         ruleNodeToRuleChinaMessage.setMsg(msg);
         ruleNodeToRuleChinaMessage.setOriginNodeId(nodeCtx.getNode().getId());
@@ -52,6 +55,7 @@ public class DefaultRuleContext implements RuleContext {
 
     @Override
     public void tellNext(RuleMessage msg, Set<String> relationTypes) {
+        msg.setOriginNodeId(nodeCtx.getNode().getId());
         Set<ConnectionType> collect = relationTypes.stream().map(DynamicStringConnectionType::of).collect(Collectors.toSet());
         RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage();
         ruleNodeToRuleChinaMessage.setMsg(msg);
@@ -62,6 +66,7 @@ public class DefaultRuleContext implements RuleContext {
 
     @Override
     public void tellTrue(RuleMessage msg) {
+        msg.setOriginNodeId(nodeCtx.getNode().getId());
         RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage();
         ruleNodeToRuleChinaMessage.setMsg(msg);
         ruleNodeToRuleChinaMessage.setOriginNodeId(nodeCtx.getNode().getId());
@@ -71,6 +76,7 @@ public class DefaultRuleContext implements RuleContext {
 
     @Override
     public void tellFalse(RuleMessage msg) {
+        msg.setOriginNodeId(nodeCtx.getNode().getId());
         RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage();
         ruleNodeToRuleChinaMessage.setMsg(msg);
         ruleNodeToRuleChinaMessage.setOriginNodeId(nodeCtx.getNode().getId());

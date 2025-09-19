@@ -4,6 +4,9 @@ import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Props;
 import cc.sofast.framework.literule4j.actor.AppActor;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMessage;
+import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
+import cc.sofast.framework.literule4j.actor.lifecycle.RuleEngineMessage;
+import cc.sofast.framework.literule4j.actor.lifecycle.RuleNodeToRuleChinaMessage;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -19,7 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Setter
 public class RuleEngineService {
 
-    private ActorSystem<RuleMessage> system;
+    private ActorSystem<ActorMsg> system;
 
     public RuleEngineService() {
         Config config = ConfigFactory.parseString("akka.warn-on-no-license-key = off")
@@ -29,7 +32,9 @@ public class RuleEngineService {
     }
 
     public void post(RuleMessage message) {
-        system.tell(message);
+        RuleEngineMessage ruleEngineMessage = new RuleEngineMessage();
+        ruleEngineMessage.setMsg(message);
+        system.tell(ruleEngineMessage);
     }
 
     public void init(RuleChinaDefinition ruleChinaDefinition, ActorSystemContext actorSystemContext) {

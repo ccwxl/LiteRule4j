@@ -6,7 +6,9 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
-import cc.sofast.framework.literule4j.actor.lifecycle.DefaultRuleMessage;
+import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
+import cc.sofast.framework.literule4j.actor.lifecycle.RuleEngineMessage;
+import cc.sofast.framework.literule4j.actor.lifecycle.RuleNodeToRuleChinaMessage;
 import cc.sofast.framework.literule4j.api.*;
 import cc.sofast.framework.literule4j.api.metadata.Node;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
@@ -14,16 +16,16 @@ import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 /**
  * @author wxl
  */
-public class RuleNodeActor extends AbstractBehavior<RuleMessage> {
+public class RuleNodeActor extends AbstractBehavior<ActorMsg> {
     private RuleChinaDefinition definition;
     private RuleNode ruleNode;
     private Node node;
-    private ActorRef<RuleMessage> ruleChainActor;
+    private ActorRef<ActorMsg> ruleChainActor;
     private DefaultRuleContext ruleContext;
 
-    public RuleNodeActor(ActorContext<RuleMessage> context,
+    public RuleNodeActor(ActorContext<ActorMsg> context,
                          RuleChinaDefinition definition, ActorSystemContext actorSystemContext,
-                         Node node, ActorRef<RuleMessage> ruleChainActor) {
+                         Node node, ActorRef<ActorMsg> ruleChainActor) {
         super(context);
         this.definition = definition;
         this.ruleNode = NodeFactory.creteRuleNode(node.getId(), node.getType(), node.getConfiguration());
@@ -35,24 +37,24 @@ public class RuleNodeActor extends AbstractBehavior<RuleMessage> {
         this.ruleContext = new DefaultRuleContext(actorSystemContext, definition.getRuleChain().getName(), ruleNodeCtx);
     }
 
-    public static Behavior<RuleMessage> create(RuleChinaDefinition definition, ActorSystemContext context, Node node,
-                                               ActorRef<RuleMessage> ruleChainActor) {
+    public static Behavior<ActorMsg> create(RuleChinaDefinition definition, ActorSystemContext context, Node node,
+                                            ActorRef<ActorMsg> ruleChainActor) {
         return Behaviors.setup(ctx -> new RuleNodeActor(ctx, definition, context, node, ruleChainActor));
     }
 
     @Override
-    public Receive<RuleMessage> createReceive() {
+    public Receive<ActorMsg> createReceive() {
         return newReceiveBuilder()
-                .onMessage(DefaultRuleMessage.class, this::onMessage)
+                .onMessage(RuleEngineMessage.class, this::onMessage)
                 .build();
     }
 
-    private Behavior<RuleMessage> onMessage(DefaultRuleMessage ruleMessage) {
+    private Behavior<ActorMsg> onMessage(RuleEngineMessage ruleMessage) {
+        RuleMessage msg = ruleMessage.getMsg();
         try {
-            getContext().getLog().info("[onMsg] RuleNodeActor received a msg: {}", ruleMessage);
-            ruleNode.onMsg(ruleContext, ruleMessage);
+            ruleNode.onMsg(ruleContext, msg);
         } catch (Exception e) {
-            ruleContext.tellFailure(ruleMessage, e);
+            ruleContext.tellFailure(msg, e);
         }
         return this;
     }

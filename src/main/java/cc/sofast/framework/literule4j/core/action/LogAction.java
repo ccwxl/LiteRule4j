@@ -2,6 +2,7 @@ package cc.sofast.framework.literule4j.core.action;
 
 import cc.sofast.framework.literule4j.api.AbstractRuleNode;
 import cc.sofast.framework.literule4j.api.RuleContext;
+import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
 import cc.sofast.framework.literule4j.api.RuleMessage;
 import lombok.extern.slf4j.Slf4j;
 
@@ -30,7 +31,7 @@ public class LogAction extends AbstractRuleNode {
      */
     @Override
     public void onMsg(RuleContext ctx, RuleMessage ruleMsg) throws Exception {
-        log.info("LogAction:{} id:{}", ruleMsg, getId());
+        log.info("LogAction:[{}] id:[{}] originId: [{}]", ruleMsg.getRuleChainId(), getId(), ruleMsg.getOriginNodeId());
         ctx.tellSuccess(ruleMsg);
     }
 }

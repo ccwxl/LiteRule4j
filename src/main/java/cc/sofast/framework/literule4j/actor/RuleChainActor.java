@@ -6,16 +6,17 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
-import cc.sofast.framework.literule4j.actor.lifecycle.DefaultRuleMessage;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMessage;
+import cc.sofast.framework.literule4j.actor.lifecycle.RuleEngineMessage;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleNodeToRuleChinaMessage;
 import cc.sofast.framework.literule4j.api.ActorSystemContext;
-import cc.sofast.framework.literule4j.api.RuleMessage;
+import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
 import cc.sofast.framework.literule4j.api.RuleNodeCtx;
 import cc.sofast.framework.literule4j.api.metadata.Connection;
 import cc.sofast.framework.literule4j.api.metadata.Metadata;
 import cc.sofast.framework.literule4j.api.metadata.Node;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
+import org.springframework.util.CollectionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,45 +28,44 @@ import java.util.concurrent.ConcurrentHashMap;
  *
  * @author wxl
  */
-public class RuleChainActor extends AbstractBehavior<RuleMessage> {
+public class RuleChainActor extends AbstractBehavior<ActorMsg> {
 
     private RuleChinaDefinition definition;
 
     private RuleNodeCtx firstNodeCtx;
 
-    private final Map<String, ActorRef<RuleMessage>> ruleNodeIdToActor = new ConcurrentHashMap<>();
+    private final Map<String, ActorRef<ActorMsg>> ruleNodeIdToActor = new ConcurrentHashMap<>();
 
     private final Map<String, List<String>> ruleNodeIdToConnections = new ConcurrentHashMap<>();
 
-    public RuleChainActor(ActorContext<RuleMessage> context, RuleChinaDefinition definition) {
+    public RuleChainActor(ActorContext<ActorMsg> context, RuleChinaDefinition definition) {
         super(context);
         this.definition = definition;
     }
 
-    public static Behavior<RuleMessage> create(RuleChinaDefinition definition) {
+    public static Behavior<ActorMsg> create(RuleChinaDefinition definition) {
 
         return Behaviors.setup(ctx -> new RuleChainActor(ctx, definition));
     }
 
     @Override
-    public Receive<RuleMessage> createReceive() {
+    public Receive<ActorMsg> createReceive() {
         return newReceiveBuilder()
                 .onMessage(RuleChinaInitMessage.class, this::initRuleNodeActors)
                 .onMessage(RuleNodeToRuleChinaMessage.class, this::processNodeMessage)
-                .onMessage(DefaultRuleMessage.class, this::onMessage)
+                .onMessage(RuleEngineMessage.class, this::onMessage)
                 .build();
     }
 
-
-    private Behavior<RuleMessage> initRuleNodeActors(RuleChinaInitMessage initMsg) {
+    private Behavior<ActorMsg> initRuleNodeActors(RuleChinaInitMessage initMsg) {
         RuleChinaDefinition definition = initMsg.getDefinition();
         ActorSystemContext context = initMsg.getContext();
         Metadata metadata = definition.getMetadata();
         List<Node> nodes = metadata.getNodes();
         List<Connection> connections = metadata.getConnections();
-        ActorRef<RuleMessage> self = getContext().getSelf();
+        ActorRef<ActorMsg> self = getContext().getSelf();
         for (Node node : nodes) {
-            ActorRef<RuleMessage> nodeActor = getContext().spawn(RuleNodeActor.create(definition, context, node, self), node.getId());
+            ActorRef<ActorMsg> nodeActor = getContext().spawn(RuleNodeActor.create(definition, context, node, self), node.getId());
             if (node.getFirstNode()) {
                 firstNodeCtx = new RuleNodeCtx(self, nodeActor, node);
             }
@@ -84,20 +84,21 @@ public class RuleChainActor extends AbstractBehavior<RuleMessage> {
         return this;
     }
 
-    private Behavior<RuleMessage> onMessage(DefaultRuleMessage ruleMessage) {
-        getContext().getLog().info("[onMsg] RuleChainActor received a msg: {}", ruleMessage);
+    private Behavior<ActorMsg> onMessage(RuleEngineMessage ruleMessage) {
         firstNodeCtx.getSelfActor().tell(ruleMessage);
         return this;
     }
 
-
-    private Behavior<RuleMessage> processNodeMessage(RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage) {
+    private Behavior<ActorMsg> processNodeMessage(RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage) {
         // 获取RuleNode的下面的节点执行
         String originNodeId = ruleNodeToRuleChinaMessage.getOriginNodeId();
         List<String> nextNodeIds = ruleNodeIdToConnections.get(originNodeId);
+        if (CollectionUtils.isEmpty(nextNodeIds)) {
+            return this;
+        }
         for (String nextNodeId : nextNodeIds) {
-            ActorRef<RuleMessage> nextNodeActor = ruleNodeIdToActor.get(nextNodeId);
-            nextNodeActor.tell(ruleNodeToRuleChinaMessage.getMsg());
+            ActorRef<ActorMsg> nextNodeActor = ruleNodeIdToActor.get(nextNodeId);
+            nextNodeActor.tell(ruleNodeToRuleChinaMessage);
         }
         return this;
     }

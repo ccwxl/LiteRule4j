@@ -10,7 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class RuleChinaInitMessage implements RuleDataLifeMessage {
+public class RuleChinaInitMessage implements ActorDataLifeMsg {
 
     private RuleChinaDefinition definition;
 
