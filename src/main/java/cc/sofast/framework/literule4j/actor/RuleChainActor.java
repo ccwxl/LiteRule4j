@@ -6,11 +6,11 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
+import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMessage;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleEngineMessage;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleNodeToRuleChinaMessage;
 import cc.sofast.framework.literule4j.api.ActorSystemContext;
-import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
 import cc.sofast.framework.literule4j.api.RuleNodeCtx;
 import cc.sofast.framework.literule4j.api.metadata.Connection;
 import cc.sofast.framework.literule4j.api.metadata.Metadata;
@@ -96,9 +96,16 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
         if (CollectionUtils.isEmpty(nextNodeIds)) {
             return this;
         }
-        for (String nextNodeId : nextNodeIds) {
+        if (nextNodeIds.size() == 1) {
+            String nextNodeId = nextNodeIds.getFirst();
             ActorRef<ActorMsg> nextNodeActor = ruleNodeIdToActor.get(nextNodeId);
             nextNodeActor.tell(ruleNodeToRuleChinaMessage);
+        } else {
+            for (String nextNodeId : nextNodeIds) {
+                ActorRef<ActorMsg> nextNodeActor = ruleNodeIdToActor.get(nextNodeId);
+                //todo 数据需要拷贝。ActorNode的消息需要不可变。
+                nextNodeActor.tell(ruleNodeToRuleChinaMessage);
+            }
         }
         return this;
     }
