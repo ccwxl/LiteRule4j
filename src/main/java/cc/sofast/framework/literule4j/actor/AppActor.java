@@ -2,6 +2,7 @@ package cc.sofast.framework.literule4j.actor;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.Props;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -44,18 +45,22 @@ public class AppActor extends AbstractBehavior<ActorMsg> {
             getContext().getLog().info("[initMsg] AppActor already exists: [{}]", id);
             return this;
         }
-        ActorRef<ActorMsg> chinaActor = getContext().spawn(RuleChainActor.create(definition), definition.getRuleChain().getId());
+        Props empty = Props.empty();
+        ActorRef<ActorMsg> chinaActor = getContext().spawn(RuleChainActor.create(definition), definition.getRuleChain().getId(), empty);
         ruleChinaIdToActor.put(definition.getRuleChain().getId(), chinaActor);
         getContext().getLog().info("[initMsg] AppActor created an ruleChinaActor: {} id:[{}]", chinaActor, id);
         chinaActor.tell(initMsg);
         return this;
     }
 
-
     private Behavior<ActorMsg> onMessage(RuleEngineMessage ruleMessage) {
         String ruleChainId = ruleMessage.getMsg().getRuleChainId();
         ActorRef<ActorMsg> ruleMessageActorRef = ruleChinaIdToActor.get(ruleChainId);
-        ruleMessageActorRef.tell(ruleMessage);
+        if (ruleMessageActorRef != null) {
+            ruleMessageActorRef.tell(ruleMessage);
+        } else {
+            getContext().getLog().warn("[onMessage] No actor found for ruleChainId: [{}]", ruleChainId);
+        }
         return this;
     }
 }

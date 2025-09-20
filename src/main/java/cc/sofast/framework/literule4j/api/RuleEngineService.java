@@ -26,7 +26,10 @@ public class RuleEngineService {
     public RuleEngineService() {
         Config config = ConfigFactory.parseString("akka.warn-on-no-license-key = off")
                 .withFallback(ConfigFactory.load());
-        this.system = ActorSystem.create(AppActor.create(), "RuleEngineSystem", config, Props.empty().withDispatcherDefault());
+        Props props = Props.empty()
+                .withMailboxFromConfig("priority-mailbox")
+                .withDispatcherDefault();
+        this.system = ActorSystem.create(AppActor.create(), "RuleEngineSystem", config, props);
         system.log().info("[initMsg] RuleEngineService created an appActor: {}", system);
     }
 

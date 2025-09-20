@@ -2,6 +2,7 @@ package cc.sofast.framework.literule4j.actor;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
+import akka.actor.typed.Props;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -65,7 +66,8 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
         List<Connection> connections = metadata.getConnections();
         ActorRef<ActorMsg> self = getContext().getSelf();
         for (Node node : nodes) {
-            ActorRef<ActorMsg> nodeActor = getContext().spawn(RuleNodeActor.create(definition, context, node, self), node.getId());
+            Props empty = Props.empty();
+            ActorRef<ActorMsg> nodeActor = getContext().spawn(RuleNodeActor.create(definition, context, node, self), node.getId(), empty);
             if (node.getFirstNode()) {
                 firstNodeCtx = new RuleNodeCtx(self, nodeActor, node);
             }
