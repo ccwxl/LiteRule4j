@@ -61,7 +61,7 @@ It is designed for IoT message processing, rule chains, and event-driven workflo
 - **Router** (RoundRobin, PoolRouter) for parallelism
 - **SupervisorStrategy** for fault recovery
 - Dispatcher, mailbox configs (TODO)
-
+- Cluster (TODO)
 ---
 
 ## 🧩 Use Cases

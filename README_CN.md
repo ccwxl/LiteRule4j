@@ -60,6 +60,7 @@
 - 可配置 **Router**（RoundRobin、PoolRouter 等）提升并发能力
 - 可配置 **SupervisorStrategy** 实现失败恢复
 - 支持 Dispatcher、Mailbox 等扩展 (TODO)
+- 集群模式 (TODO)
 
 ---
 
