@@ -55,7 +55,7 @@ public class RuleNodeActor extends AbstractBehavior<ActorMsg> {
 
     private Behavior<ActorMsg> onMessage(RuleEngineMessage ruleMessage) {
         RuleMessage msg = ruleMessage.getMsg();
-        getContext().getLog().info("[onMessage] nodeId: [{}]", getContext().getSelf());
+        getContext().getLog().info("[onMessage] ProcessMessage nodeId: [{}]", getContext().getSelf());
         try {
             ruleNode.onMsg(ruleContext, msg);
         } catch (Exception e) {

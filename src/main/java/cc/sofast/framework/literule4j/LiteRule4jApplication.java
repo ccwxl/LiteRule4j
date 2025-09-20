@@ -20,12 +20,14 @@ public class LiteRule4jApplication {
     @Bean
     public CommandLineRunner commandLineRunner(RuleEngineController controller) {
         return _ -> {
-            RuleMessage message = RuleMessage.builder()
-                    .ruleChainId("chain_has_sub_chain_node")
-                    .msgType("rule_chain_init")
-                    .putData("aa",222)
-                    .build();
-            controller.exec(message);
+            for (int i = 0; i < 30; i++) {
+                RuleMessage message = RuleMessage.builder()
+                        .ruleChainId("chain_has_sub_chain_node")
+                        .msgType("rule_chain_init")
+                        .putData("index", i)
+                        .build();
+                controller.exec(message);
+            }
         };
     }
 }
