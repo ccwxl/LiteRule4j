@@ -26,9 +26,6 @@ public class AppActor extends AbstractBehavior<ActorMsg> {
     }
 
     public static Behavior<ActorMsg> create() {
-        PoolRouter<ActorMsg> actorMsgPoolRouter =
-                Routers.pool(3, Behaviors.setup(AppActor::new))
-                        .withRoundRobinRouting();
 
         return Behaviors.supervise(Behaviors.setup(AppActor::new))
                 .onFailure(RuntimeException.class, SupervisorStrategy.restart()
@@ -55,7 +52,6 @@ public class AppActor extends AbstractBehavior<ActorMsg> {
 //                .withMailboxFromConfig()
         ActorRef<ActorMsg> chinaActor = getContext().spawn(RuleChainActor.create(definition), definition.getRuleChain().getId(), empty);
         ruleChinaIdToActor.put(definition.getRuleChain().getId(), chinaActor);
-        getContext().getLog().info("[initMsg] AppActor created an ruleChinaActor: {} id:[{}]", chinaActor, id);
         chinaActor.tell(initMsg);
         return this;
     }

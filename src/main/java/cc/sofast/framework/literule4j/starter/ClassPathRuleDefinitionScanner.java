@@ -4,6 +4,7 @@ import cc.sofast.framework.literule4j.api.ActorSystemContext;
 import cc.sofast.framework.literule4j.api.RuleEngineService;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 import cc.sofast.framework.literule4j.core.utils.JsonUtils;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -11,6 +12,7 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 /**
  * @author wxl
  */
+@Slf4j
 public class ClassPathRuleDefinitionScanner implements InitializingBean {
 
     private final RuleEngineService ruleEngineService;

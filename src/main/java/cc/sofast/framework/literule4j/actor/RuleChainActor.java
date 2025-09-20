@@ -44,11 +44,8 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
     }
 
     public static Behavior<ActorMsg> create(RuleChinaDefinition definition) {
-        PoolRouter<ActorMsg> actorMsgPoolRouter =
-                Routers.pool(4, Behaviors.<ActorMsg>setup(ctx -> new RuleChainActor(ctx, definition)))
-                        .withRoundRobinRouting();
         //supervisorStrategy
-        return Behaviors.<ActorMsg>supervise(Behaviors.<ActorMsg>setup(ctx -> new RuleChainActor(ctx, definition)))
+        return Behaviors.<ActorMsg>supervise(Behaviors.setup(ctx -> new RuleChainActor(ctx, definition)))
                 .onFailure(RuntimeException.class, SupervisorStrategy.restart()
                         .withLimit(3, Duration.ofMinutes(1)));
     }

@@ -38,14 +38,11 @@ public class RuleNodeActor extends AbstractBehavior<ActorMsg> {
 
     public static Behavior<ActorMsg> create(RuleChinaDefinition definition, ActorSystemContext context, Node node,
                                             ActorRef<ActorMsg> ruleChainActor) {
-        PoolRouter<ActorMsg> actorMsgPoolRouter =
-                Routers.pool(3, Behaviors.<ActorMsg>setup(ctx -> new RuleNodeActor(ctx, definition, context, node, ruleChainActor)))
-                        .withRoundRobinRouting();
 
-        //supervisorStrategy
-        return Behaviors.<ActorMsg>supervise(Behaviors.<ActorMsg>setup(ctx -> new RuleNodeActor(ctx, definition, context, node, ruleChainActor)))
-                .onFailure(RuntimeException.class, SupervisorStrategy.restart()
-                        .withLimit(3, Duration.ofMinutes(1)));
+        return Routers.pool(3, Behaviors.supervise(Behaviors.<ActorMsg>setup(ctx -> new RuleNodeActor(ctx, definition, context, node, ruleChainActor)))
+                        .onFailure(RuntimeException.class, SupervisorStrategy.restart()
+                                .withLimit(3, Duration.ofMinutes(1))))
+                .withRoundRobinRouting();
     }
 
     @Override
@@ -57,6 +54,7 @@ public class RuleNodeActor extends AbstractBehavior<ActorMsg> {
 
     private Behavior<ActorMsg> onMessage(RuleEngineMessage ruleMessage) {
         RuleMessage msg = ruleMessage.getMsg();
+        getContext().getLog().info("[onMessage] nodeId: [{}]", getContext().getSelf());
         try {
             ruleNode.onMsg(ruleContext, msg);
         } catch (Exception e) {
