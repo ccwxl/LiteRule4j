@@ -53,7 +53,7 @@ public class AppActor extends AbstractBehavior<ActorMsg> {
         ActorRef<ActorMsg> chinaActor = getContext().spawn(RuleChainActor.create(definition), definition.getRuleChain().getId(), empty);
         ruleChinaIdToActor.put(definition.getRuleChain().getId(), chinaActor);
         chinaActor.tell(initMsg);
-        return this;
+        return Behaviors.same();
     }
 
     private Behavior<ActorMsg> onMessage(RuleEngineMessage ruleMessage) {
@@ -64,6 +64,6 @@ public class AppActor extends AbstractBehavior<ActorMsg> {
         } else {
             getContext().getLog().warn("[onMessage] No actor found for ruleChainId: [{}]", ruleChainId);
         }
-        return this;
+        return Behaviors.same();
     }
 }

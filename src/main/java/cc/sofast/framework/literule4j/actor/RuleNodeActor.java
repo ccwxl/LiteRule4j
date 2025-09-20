@@ -39,9 +39,10 @@ public class RuleNodeActor extends AbstractBehavior<ActorMsg> {
     public static Behavior<ActorMsg> create(RuleChinaDefinition definition, ActorSystemContext context, Node node,
                                             ActorRef<ActorMsg> ruleChainActor) {
 
-        return Routers.pool(3, Behaviors.supervise(Behaviors.<ActorMsg>setup(ctx -> new RuleNodeActor(ctx, definition, context, node, ruleChainActor)))
-                        .onFailure(RuntimeException.class, SupervisorStrategy.restart()
-                                .withLimit(3, Duration.ofMinutes(1))))
+        return Routers.pool(3,
+                        Behaviors.supervise(Behaviors.<ActorMsg>setup(ctx -> new RuleNodeActor(ctx, definition, context, node, ruleChainActor)))
+                                .onFailure(RuntimeException.class, SupervisorStrategy.restart()
+                                        .withLimit(3, Duration.ofMinutes(1))))
                 .withRoundRobinRouting();
     }
 
@@ -60,6 +61,6 @@ public class RuleNodeActor extends AbstractBehavior<ActorMsg> {
         } catch (Exception e) {
             ruleContext.tellFailure(msg, e);
         }
-        return this;
+        return Behaviors.same();
     }
 }

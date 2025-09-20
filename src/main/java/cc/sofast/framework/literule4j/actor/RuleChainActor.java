@@ -86,12 +86,12 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
             List<String> connectionList = ruleNodeIdToConnections.computeIfAbsent(fromId, k -> new ArrayList<>());
             connectionList.add(toId);
         }
-        return this;
+        return Behaviors.same();
     }
 
     private Behavior<ActorMsg> onMessage(RuleEngineMessage ruleMessage) {
         firstNodeCtx.getSelfActor().tell(ruleMessage);
-        return this;
+        return Behaviors.same();
     }
 
     private Behavior<ActorMsg> processNodeMessage(RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage) {
@@ -112,6 +112,6 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
                 nextNodeActor.tell(ruleNodeToRuleChinaMessage);
             }
         }
-        return this;
+        return Behaviors.same();
     }
 }
