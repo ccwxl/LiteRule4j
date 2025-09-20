@@ -30,9 +30,8 @@ public class LogAction2 extends AbstractRuleNode {
      */
     @Override
     public void onMsg(RuleContext ctx, RuleMessage ruleMsg) throws Exception {
-        log.info("LogAction2:[{}] id:[{}] originId: [{}]", ruleMsg, getId(), ruleMsg.getOriginNodeId());
+        log.info("LogAction2:[{}] id:[{}]", ruleMsg, getId());
         Thread.sleep(3_000);
-        log.info("sleep ok originId {}",ruleMsg.getOriginNodeId());
         ctx.tellSuccess(ruleMsg);
     }
 }

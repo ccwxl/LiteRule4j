@@ -30,7 +30,7 @@ public class LogAction1 extends AbstractRuleNode {
      */
     @Override
     public void onMsg(RuleContext ctx, RuleMessage ruleMsg) throws Exception {
-        log.info("LogAction1:[{}] id:[{}] originId: [{}]", ruleMsg, getId(), ruleMsg.getOriginNodeId());
+        log.info("LogAction1:[{}] id:[{}]", ruleMsg, getId());
         ctx.tellSuccess(ruleMsg);
     }
 }

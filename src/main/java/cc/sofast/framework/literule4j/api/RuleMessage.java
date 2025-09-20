@@ -1,6 +1,8 @@
 package cc.sofast.framework.literule4j.api;
 
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -14,12 +16,6 @@ import java.util.concurrent.ConcurrentHashMap;
 public final class RuleMessage {
 
     /**
-     * todo 源节点ID
-     */
-    @Deprecated
-    private final String originNodeId;
-
-    /**
      * 规则链ID
      */
     private final String ruleChainId;
@@ -31,9 +27,31 @@ public final class RuleMessage {
     /**
      * 元数据
      */
+    @Builder.Default
     private final Map<String, Object> metadata = new ConcurrentHashMap<>();
     /**
      * 数据
      */
+    @Builder.Default
     private final Map<String, Object> data = new ConcurrentHashMap<>();
+
+    public static class RuleMessageBuilder {
+        public RuleMessageBuilder putMetadata(String key, Object value) {
+            if (!metadata$set) {
+                metadata(new ConcurrentHashMap<>());
+                metadata$set = true;
+            }
+            this.metadata$value.put(key, value);
+            return this;
+        }
+
+        public RuleMessageBuilder putData(String key, Object value) {
+            if (!data$set) {
+                data(new ConcurrentHashMap<>());
+                data$set = true;
+            }
+            this.data$value.put(key, value);
+            return this;
+        }
+    }
 }
