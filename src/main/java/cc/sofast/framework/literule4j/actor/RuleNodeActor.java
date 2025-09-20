@@ -2,15 +2,15 @@ package cc.sofast.framework.literule4j.actor;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
-import akka.actor.typed.javadsl.AbstractBehavior;
-import akka.actor.typed.javadsl.ActorContext;
-import akka.actor.typed.javadsl.Behaviors;
-import akka.actor.typed.javadsl.Receive;
+import akka.actor.typed.SupervisorStrategy;
+import akka.actor.typed.javadsl.*;
 import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleEngineMessage;
 import cc.sofast.framework.literule4j.api.*;
 import cc.sofast.framework.literule4j.api.metadata.Node;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
+
+import java.time.Duration;
 
 /**
  * @author wxl
@@ -38,7 +38,14 @@ public class RuleNodeActor extends AbstractBehavior<ActorMsg> {
 
     public static Behavior<ActorMsg> create(RuleChinaDefinition definition, ActorSystemContext context, Node node,
                                             ActorRef<ActorMsg> ruleChainActor) {
-        return Behaviors.setup(ctx -> new RuleNodeActor(ctx, definition, context, node, ruleChainActor));
+        PoolRouter<ActorMsg> actorMsgPoolRouter =
+                Routers.pool(3, Behaviors.<ActorMsg>setup(ctx -> new RuleNodeActor(ctx, definition, context, node, ruleChainActor)))
+                        .withRoundRobinRouting();
+
+        //supervisorStrategy
+        return Behaviors.<ActorMsg>supervise(Behaviors.<ActorMsg>setup(ctx -> new RuleNodeActor(ctx, definition, context, node, ruleChainActor)))
+                .onFailure(RuntimeException.class, SupervisorStrategy.restart()
+                        .withLimit(3, Duration.ofMinutes(1)));
     }
 
     @Override

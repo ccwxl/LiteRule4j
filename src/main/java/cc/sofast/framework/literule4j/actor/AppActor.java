@@ -3,15 +3,14 @@ package cc.sofast.framework.literule4j.actor;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.Props;
-import akka.actor.typed.javadsl.AbstractBehavior;
-import akka.actor.typed.javadsl.ActorContext;
-import akka.actor.typed.javadsl.Behaviors;
-import akka.actor.typed.javadsl.Receive;
+import akka.actor.typed.SupervisorStrategy;
+import akka.actor.typed.javadsl.*;
 import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMessage;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleEngineMessage;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -27,7 +26,13 @@ public class AppActor extends AbstractBehavior<ActorMsg> {
     }
 
     public static Behavior<ActorMsg> create() {
-        return Behaviors.setup(AppActor::new);
+        PoolRouter<ActorMsg> actorMsgPoolRouter =
+                Routers.pool(3, Behaviors.setup(AppActor::new))
+                        .withRoundRobinRouting();
+
+        return Behaviors.supervise(Behaviors.setup(AppActor::new))
+                .onFailure(RuntimeException.class, SupervisorStrategy.restart()
+                        .withLimit(3, Duration.ofMinutes(1)));
     }
 
     @Override
@@ -46,6 +51,8 @@ public class AppActor extends AbstractBehavior<ActorMsg> {
             return this;
         }
         Props empty = Props.empty();
+//        empty.withDispatcherFromConfig()
+//                .withMailboxFromConfig()
         ActorRef<ActorMsg> chinaActor = getContext().spawn(RuleChainActor.create(definition), definition.getRuleChain().getId(), empty);
         ruleChinaIdToActor.put(definition.getRuleChain().getId(), chinaActor);
         getContext().getLog().info("[initMsg] AppActor created an ruleChinaActor: {} id:[{}]", chinaActor, id);

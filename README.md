@@ -6,3 +6,5 @@ LiteRule4j is a lightweight rule engine for IoT, written in Java.
     - todo
         - dispatcher
         - mailbox
+        - router
+        - Fault Tolerance

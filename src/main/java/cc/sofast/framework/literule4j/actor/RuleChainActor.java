@@ -3,10 +3,8 @@ package cc.sofast.framework.literule4j.actor;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.Props;
-import akka.actor.typed.javadsl.AbstractBehavior;
-import akka.actor.typed.javadsl.ActorContext;
-import akka.actor.typed.javadsl.Behaviors;
-import akka.actor.typed.javadsl.Receive;
+import akka.actor.typed.SupervisorStrategy;
+import akka.actor.typed.javadsl.*;
 import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMessage;
 import cc.sofast.framework.literule4j.actor.lifecycle.RuleEngineMessage;
@@ -19,6 +17,7 @@ import cc.sofast.framework.literule4j.api.metadata.Node;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 import org.springframework.util.CollectionUtils;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -45,8 +44,13 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
     }
 
     public static Behavior<ActorMsg> create(RuleChinaDefinition definition) {
-
-        return Behaviors.setup(ctx -> new RuleChainActor(ctx, definition));
+        PoolRouter<ActorMsg> actorMsgPoolRouter =
+                Routers.pool(4, Behaviors.<ActorMsg>setup(ctx -> new RuleChainActor(ctx, definition)))
+                        .withRoundRobinRouting();
+        //supervisorStrategy
+        return Behaviors.<ActorMsg>supervise(Behaviors.<ActorMsg>setup(ctx -> new RuleChainActor(ctx, definition)))
+                .onFailure(RuntimeException.class, SupervisorStrategy.restart()
+                        .withLimit(3, Duration.ofMinutes(1)));
     }
 
     @Override
@@ -67,6 +71,8 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
         ActorRef<ActorMsg> self = getContext().getSelf();
         for (Node node : nodes) {
             Props empty = Props.empty();
+            //        empty.withDispatcherFromConfig()
+//                .withMailboxFromConfig()
             ActorRef<ActorMsg> nodeActor = getContext().spawn(RuleNodeActor.create(definition, context, node, self), node.getId(), empty);
             if (node.getFirstNode()) {
                 firstNodeCtx = new RuleNodeCtx(self, nodeActor, node);
