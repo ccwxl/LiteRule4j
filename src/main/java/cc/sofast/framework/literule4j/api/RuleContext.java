@@ -17,4 +17,8 @@ public interface RuleContext {
     void tellTrue(RuleMessage msg);
 
     void tellFalse(RuleMessage msg);
+
+    String getSelfId();
+
+    String getSelfPath();
 }

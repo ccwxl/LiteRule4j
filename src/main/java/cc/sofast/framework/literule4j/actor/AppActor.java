@@ -5,9 +5,9 @@ import akka.actor.typed.Behavior;
 import akka.actor.typed.Props;
 import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.*;
-import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMessage;
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleEngineMessage;
+import cc.sofast.framework.literule4j.actor.message.ActorMsg;
+import cc.sofast.framework.literule4j.actor.message.RuleChinaInitMessage;
+import cc.sofast.framework.literule4j.actor.message.SendToRuleMessage;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
 
 import java.time.Duration;
@@ -36,7 +36,7 @@ public class AppActor extends AbstractBehavior<ActorMsg> {
     public Receive<ActorMsg> createReceive() {
         return newReceiveBuilder()
                 .onMessage(RuleChinaInitMessage.class, this::initRuleChinaHandler)
-                .onMessage(RuleEngineMessage.class, this::onMessage)
+                .onMessage(SendToRuleMessage.class, this::onMessage)
                 .build();
     }
 
@@ -56,7 +56,7 @@ public class AppActor extends AbstractBehavior<ActorMsg> {
         return Behaviors.same();
     }
 
-    private Behavior<ActorMsg> onMessage(RuleEngineMessage ruleMessage) {
+    private Behavior<ActorMsg> onMessage(SendToRuleMessage ruleMessage) {
         String ruleChainId = ruleMessage.getMsg().getRuleChainId();
         ActorRef<ActorMsg> ruleMessageActorRef = ruleChinaIdToActor.get(ruleChainId);
         if (ruleMessageActorRef != null) {

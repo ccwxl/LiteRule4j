@@ -4,8 +4,8 @@ import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.*;
-import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleEngineMessage;
+import cc.sofast.framework.literule4j.actor.message.ActorMsg;
+import cc.sofast.framework.literule4j.actor.message.SendToRuleMessage;
 import cc.sofast.framework.literule4j.api.*;
 import cc.sofast.framework.literule4j.api.metadata.Node;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
@@ -27,7 +27,7 @@ public class RuleNodeActor extends AbstractBehavior<ActorMsg> {
                          Node node, ActorRef<ActorMsg> ruleChainActor) {
         super(context);
         this.definition = definition;
-        this.ruleNode = NodeFactory.creteRuleNode(node.getId(), node.getType(), node.getConfiguration());
+        this.ruleNode = RuleNodeFactory.creteRuleNode(node.getId(), node.getType(), node.getConfiguration());
         this.ruleChainActor = ruleChainActor;
         RuleNodeCtx ruleNodeCtx = new RuleNodeCtx();
         ruleNodeCtx.setRuleChainActor(ruleChainActor);
@@ -49,13 +49,12 @@ public class RuleNodeActor extends AbstractBehavior<ActorMsg> {
     @Override
     public Receive<ActorMsg> createReceive() {
         return newReceiveBuilder()
-                .onMessage(RuleEngineMessage.class, this::onMessage)
+                .onMessage(SendToRuleMessage.class, this::onMessage)
                 .build();
     }
 
-    private Behavior<ActorMsg> onMessage(RuleEngineMessage ruleMessage) {
+    private Behavior<ActorMsg> onMessage(SendToRuleMessage ruleMessage) {
         RuleMessage msg = ruleMessage.getMsg();
-        getContext().getLog().info("[onMessage] ProcessMessage nodeId: [{}]", getContext().getSelf());
         try {
             ruleNode.onMsg(ruleContext, msg);
         } catch (Exception e) {

@@ -1,7 +1,7 @@
 package cc.sofast.framework.literule4j.api;
 
 import akka.actor.typed.ActorRef;
-import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
+import cc.sofast.framework.literule4j.actor.message.ActorMsg;
 import cc.sofast.framework.literule4j.api.metadata.Node;
 import lombok.Getter;
 import lombok.Setter;

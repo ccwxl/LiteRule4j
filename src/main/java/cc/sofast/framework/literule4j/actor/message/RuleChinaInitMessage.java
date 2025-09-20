@@ -1,4 +1,4 @@
-package cc.sofast.framework.literule4j.actor.lifecycle;
+package cc.sofast.framework.literule4j.actor.message;
 
 import cc.sofast.framework.literule4j.api.ActorSystemContext;
 import cc.sofast.framework.literule4j.api.metadata.RuleChinaDefinition;
@@ -10,7 +10,7 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class RuleChinaInitMessage implements ActorDataLifeMsg {
+public class RuleChinaInitMessage implements ActorMsg {
 
     private RuleChinaDefinition definition;
 

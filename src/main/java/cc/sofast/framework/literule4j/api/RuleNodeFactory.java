@@ -10,7 +10,7 @@ import java.util.Map;
  *
  * @author wxl
  */
-public class NodeFactory {
+public class RuleNodeFactory {
     /**
      * 创建规则节点
      *

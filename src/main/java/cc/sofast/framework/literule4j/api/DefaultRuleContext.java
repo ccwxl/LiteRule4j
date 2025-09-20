@@ -1,7 +1,7 @@
 package cc.sofast.framework.literule4j.api;
 
 
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleNodeToRuleChinaMessage;
+import cc.sofast.framework.literule4j.actor.message.SendToRuleMessage;
 import cc.sofast.framework.literule4j.api.metadata.CommonConnectionType;
 import cc.sofast.framework.literule4j.api.metadata.ConnectionType;
 import cc.sofast.framework.literule4j.api.metadata.DynamicStringConnectionType;
@@ -25,50 +25,66 @@ public class DefaultRuleContext implements RuleContext {
 
     @Override
     public void tellSuccess(RuleMessage msg) {
-        RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage(msg);
-        ruleNodeToRuleChinaMessage.setOriginNodeId(nodeCtx.getNode().getId());
-        ruleNodeToRuleChinaMessage.setRelationTypes(Set.of(CommonConnectionType.SUCCESS));
-        nodeCtx.getRuleChainActor().tell(ruleNodeToRuleChinaMessage);
+        nodeCtx.getRuleChainActor().tell(SendToRuleMessage.builder()
+                .msg(msg)
+                .originNodeId(nodeCtx.getNode().getId())
+                .relationTypes(Set.of(CommonConnectionType.SUCCESS))
+                .build());
     }
 
     @Override
     public void tellFailure(RuleMessage msg, Throwable th) {
-        RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage(msg);
-        ruleNodeToRuleChinaMessage.setOriginNodeId(nodeCtx.getNode().getId());
-        ruleNodeToRuleChinaMessage.setRelationTypes(Set.of(CommonConnectionType.FAILED));
-        nodeCtx.getRuleChainActor().tell(ruleNodeToRuleChinaMessage);
+        nodeCtx.getRuleChainActor().tell(SendToRuleMessage.builder()
+                .msg(msg)
+                .originNodeId(nodeCtx.getNode().getId())
+                .relationTypes(Set.of(CommonConnectionType.FAILED))
+                .build());
     }
 
     @Override
     public void tellNext(RuleMessage msg, String relationType) {
-        RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage(msg);
-        ruleNodeToRuleChinaMessage.setOriginNodeId(nodeCtx.getNode().getId());
-        ruleNodeToRuleChinaMessage.setRelationTypes(Set.of(DynamicStringConnectionType.of(relationType)));
-        nodeCtx.getRuleChainActor().tell(ruleNodeToRuleChinaMessage);
+        nodeCtx.getRuleChainActor().tell(SendToRuleMessage.builder()
+                .msg(msg)
+                .originNodeId(nodeCtx.getNode().getId())
+                .relationTypes(Set.of(DynamicStringConnectionType.of(relationType)))
+                .build());
     }
 
     @Override
     public void tellNext(RuleMessage msg, Set<String> relationTypes) {
         Set<ConnectionType> collect = relationTypes.stream().map(DynamicStringConnectionType::of).collect(Collectors.toSet());
-        RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage(msg);
-        ruleNodeToRuleChinaMessage.setOriginNodeId(nodeCtx.getNode().getId());
-        ruleNodeToRuleChinaMessage.setRelationTypes(collect);
-        nodeCtx.getRuleChainActor().tell(ruleNodeToRuleChinaMessage);
+        nodeCtx.getRuleChainActor().tell(SendToRuleMessage.builder()
+                .msg(msg)
+                .originNodeId(nodeCtx.getNode().getId())
+                .relationTypes(collect)
+                .build());
     }
 
     @Override
     public void tellTrue(RuleMessage msg) {
-        RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage(msg);
-        ruleNodeToRuleChinaMessage.setOriginNodeId(nodeCtx.getNode().getId());
-        ruleNodeToRuleChinaMessage.setRelationTypes(Set.of(CommonConnectionType.TRUE));
-        nodeCtx.getRuleChainActor().tell(ruleNodeToRuleChinaMessage);
+        nodeCtx.getRuleChainActor().tell(SendToRuleMessage.builder()
+                .msg(msg)
+                .originNodeId(nodeCtx.getNode().getId())
+                .relationTypes(Set.of(CommonConnectionType.TRUE))
+                .build());
     }
 
     @Override
     public void tellFalse(RuleMessage msg) {
-        RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage = new RuleNodeToRuleChinaMessage(msg);
-        ruleNodeToRuleChinaMessage.setOriginNodeId(nodeCtx.getNode().getId());
-        ruleNodeToRuleChinaMessage.setRelationTypes(Set.of(CommonConnectionType.FALSE));
-        nodeCtx.getRuleChainActor().tell(ruleNodeToRuleChinaMessage);
+        nodeCtx.getRuleChainActor().tell(SendToRuleMessage.builder()
+                .msg(msg)
+                .originNodeId(nodeCtx.getNode().getId())
+                .relationTypes(Set.of(CommonConnectionType.FALSE))
+                .build());
+    }
+
+    @Override
+    public String getSelfId() {
+        return nodeCtx.getNode().getId();
+    }
+
+    @Override
+    public String getSelfPath() {
+        return nodeCtx.getSelfActor().path().toSerializationFormat();
     }
 }

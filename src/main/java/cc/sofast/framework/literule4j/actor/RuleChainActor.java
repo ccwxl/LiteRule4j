@@ -4,11 +4,13 @@ import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.Props;
 import akka.actor.typed.SupervisorStrategy;
-import akka.actor.typed.javadsl.*;
-import cc.sofast.framework.literule4j.actor.lifecycle.ActorMsg;
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleChinaInitMessage;
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleEngineMessage;
-import cc.sofast.framework.literule4j.actor.lifecycle.RuleNodeToRuleChinaMessage;
+import akka.actor.typed.javadsl.AbstractBehavior;
+import akka.actor.typed.javadsl.ActorContext;
+import akka.actor.typed.javadsl.Behaviors;
+import akka.actor.typed.javadsl.Receive;
+import cc.sofast.framework.literule4j.actor.message.ActorMsg;
+import cc.sofast.framework.literule4j.actor.message.RuleChinaInitMessage;
+import cc.sofast.framework.literule4j.actor.message.SendToRuleMessage;
 import cc.sofast.framework.literule4j.api.ActorSystemContext;
 import cc.sofast.framework.literule4j.api.RuleNodeCtx;
 import cc.sofast.framework.literule4j.api.metadata.Connection;
@@ -54,9 +56,8 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
     public Receive<ActorMsg> createReceive() {
         return newReceiveBuilder()
                 .onMessage(RuleChinaInitMessage.class, this::initRuleNodeActors)
-                .onMessage(RuleNodeToRuleChinaMessage.class, this::processNodeMessage)
-                .onMessage(RuleEngineMessage.class, this::onMessage)
-                .build();
+                .onMessage(SendToRuleMessage.class, this::processNodeMessage)
+                 .build();
     }
 
     private Behavior<ActorMsg> initRuleNodeActors(RuleChinaInitMessage initMsg) {
@@ -89,14 +90,13 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
         return Behaviors.same();
     }
 
-    private Behavior<ActorMsg> onMessage(RuleEngineMessage ruleMessage) {
-        firstNodeCtx.getSelfActor().tell(ruleMessage);
-        return Behaviors.same();
-    }
-
-    private Behavior<ActorMsg> processNodeMessage(RuleNodeToRuleChinaMessage ruleNodeToRuleChinaMessage) {
+    private Behavior<ActorMsg> processNodeMessage(SendToRuleMessage sendToRuleMessage) {
+        if (sendToRuleMessage.getOriginNodeId() == null) {
+            firstNodeCtx.getSelfActor().tell(sendToRuleMessage);
+            return Behaviors.same();
+        }
         // 获取RuleNode的下面的节点执行
-        String originNodeId = ruleNodeToRuleChinaMessage.getOriginNodeId();
+        String originNodeId = sendToRuleMessage.getOriginNodeId();
         List<String> nextNodeIds = ruleNodeIdToConnections.get(originNodeId);
         if (CollectionUtils.isEmpty(nextNodeIds)) {
             return this;
@@ -104,12 +104,12 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
         if (nextNodeIds.size() == 1) {
             String nextNodeId = nextNodeIds.getFirst();
             ActorRef<ActorMsg> nextNodeActor = ruleNodeIdToActor.get(nextNodeId);
-            nextNodeActor.tell(ruleNodeToRuleChinaMessage);
+            nextNodeActor.tell(sendToRuleMessage);
         } else {
             for (String nextNodeId : nextNodeIds) {
                 ActorRef<ActorMsg> nextNodeActor = ruleNodeIdToActor.get(nextNodeId);
                 //todo 数据需要拷贝。ActorNode的消息需要不可变。
-                nextNodeActor.tell(ruleNodeToRuleChinaMessage);
+                nextNodeActor.tell(sendToRuleMessage);
             }
         }
         return Behaviors.same();
