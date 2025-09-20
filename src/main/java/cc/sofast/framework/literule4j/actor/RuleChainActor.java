@@ -57,7 +57,7 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
         return newReceiveBuilder()
                 .onMessage(RuleChinaInitMessage.class, this::initRuleNodeActors)
                 .onMessage(SendToRuleMessage.class, this::processNodeMessage)
-                 .build();
+                .build();
     }
 
     private Behavior<ActorMsg> initRuleNodeActors(RuleChinaInitMessage initMsg) {
@@ -92,6 +92,7 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
 
     private Behavior<ActorMsg> processNodeMessage(SendToRuleMessage sendToRuleMessage) {
         if (sendToRuleMessage.getOriginNodeId() == null) {
+            //如果originNodeId为空，则说明是初始消息，则默认从第一个节点开始执行
             firstNodeCtx.getSelfActor().tell(sendToRuleMessage);
             return Behaviors.same();
         }
@@ -102,13 +103,14 @@ public class RuleChainActor extends AbstractBehavior<ActorMsg> {
             return this;
         }
         if (nextNodeIds.size() == 1) {
+            // 只有一个节点，则直接执行
             String nextNodeId = nextNodeIds.getFirst();
             ActorRef<ActorMsg> nextNodeActor = ruleNodeIdToActor.get(nextNodeId);
             nextNodeActor.tell(sendToRuleMessage);
         } else {
+            //todo 数据需要拷贝。ActorNode的消息需要不可变。
             for (String nextNodeId : nextNodeIds) {
                 ActorRef<ActorMsg> nextNodeActor = ruleNodeIdToActor.get(nextNodeId);
-                //todo 数据需要拷贝。ActorNode的消息需要不可变。
                 nextNodeActor.tell(sendToRuleMessage);
             }
         }
